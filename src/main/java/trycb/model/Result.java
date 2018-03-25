@@ -18,7 +18,7 @@ public class Result<T> implements IValue {
     }
 
     public static <T> Result<T> of(T data, String... contexts) {
-        return new Result<T>(data, contexts);
+        return new Result<>(data, contexts);
     }
 
     public T getData() {

@@ -33,7 +33,7 @@ public class Airport {
     public static Result<List<Map<String, Object>>> findAll(final Bucket bucket, final String params) {
         Statement query;
 
-        AsPath prefix = select("airportname").from(i(bucket.name()));
+        AsPath prefix = select("*").from(i(bucket.name()));
         if (params.length() == 3) {
             query = prefix.where(x("faa").eq(s(params.toUpperCase())));
         } else if (params.length() == 4 && (params.equals(params.toUpperCase()) || params.equals(params.toLowerCase()))) {

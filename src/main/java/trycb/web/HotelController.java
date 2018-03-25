@@ -1,19 +1,19 @@
 package trycb.web;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import trycb.model.Error;
 import trycb.model.IValue;
 import trycb.service.Hotel;
 
 @RestController
 @RequestMapping("/api/hotel")
+@Api(value = "Hotel Controller", description = "manage Hotel data", tags = "Hotel API")
 public class HotelController {
 
     private final Hotel hotelService;
@@ -24,7 +24,8 @@ public class HotelController {
         this.hotelService = hotelService;
     }
 
-    @RequestMapping(value="/{description}/{location}/", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Returns Hotel data", response = Object.class)
+    @GetMapping(value="/{description}/{location}/",  produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends IValue> findHotelsByDescriptionAndLocation(@PathVariable("location") String location, @PathVariable("description") String desc) {
         try {
             return ResponseEntity.ok(hotelService.findHotels(location, desc));
