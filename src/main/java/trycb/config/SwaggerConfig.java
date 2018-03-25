@@ -18,17 +18,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 public class SwaggerConfig {
 
     Contact contact = new Contact("Martin Tchokonthe", "https://github.com/MarLeo", "marin.aurele12@gmail.com");
-
-      /*return new ApiInfo(
-                "Spring Boot Swagger Example API",
-                "Spring Boot Swagger Example API for testing",
-                "1.0",
-                "Terms of Service",
-                contact,
-                "Apache License Version 2.0",
-                "https://www.apache.org/licenses/LICENSE-2.0"
-        );*/
-
+    
 
       private ApiInfo apiInfo() {
           return new ApiInfoBuilder()
