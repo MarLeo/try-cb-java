@@ -18,7 +18,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 public class SwaggerConfig {
 
     Contact contact = new Contact("Martin Tchokonthe", "https://github.com/MarLeo", "marin.aurele12@gmail.com");
-    
+
 
       private ApiInfo apiInfo() {
           return new ApiInfoBuilder()
