@@ -31,17 +31,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.couchbase.client.java.query.Index.PRIMARY_NAME;
-import static com.couchbase.client.java.query.Index.createIndex;
-import static com.couchbase.client.java.query.Index.createPrimaryIndex;
+import static com.couchbase.client.java.query.Index.*;
 import static com.couchbase.client.java.query.Select.select;
-import static com.couchbase.client.java.query.dsl.Expression.i;
-import static com.couchbase.client.java.query.dsl.Expression.s;
-import static com.couchbase.client.java.query.dsl.Expression.x;
+import static com.couchbase.client.java.query.dsl.Expression.*;
 
 @Component
 public class StartupPreparations implements InitializingBean {
@@ -72,13 +69,12 @@ public class StartupPreparations implements InitializingBean {
         );
 
 
-        List<String> indexesToCreate = new ArrayList<String>();
-        indexesToCreate.addAll(Arrays.asList(
-            "def_sourceairport", "def_airportname", "def_type", "def_faa", "def_icao", "def_city"
+        List<String> indexesToCreate = new ArrayList<>(Arrays.asList(
+                "def_sourceairport", "def_airportname", "def_type", "def_faa", "def_icao", "def_city"
         ));
 
         boolean hasPrimary = false;
-        List<String> foundIndexes = new ArrayList<String>();
+        List<String> foundIndexes = new ArrayList<>();
         for (N1qlQueryRow indexRow : indexResult) {
             String name = indexRow.value().getString("name");
             Boolean isPrimary = indexRow.value().getBoolean("is_primary");
@@ -115,7 +111,7 @@ public class StartupPreparations implements InitializingBean {
         }
 
         //prepare the list of indexes to build (both primary and secondary indexes)
-        List<String> indexesToBuild = new ArrayList<String>(indexesToCreate.size()+1);
+        List<String> indexesToBuild = new ArrayList<>(indexesToCreate.size() + 1);
         indexesToBuild.addAll(indexesToCreate);
         if (!hasPrimary) {
             indexesToBuild.add(PRIMARY_NAME);

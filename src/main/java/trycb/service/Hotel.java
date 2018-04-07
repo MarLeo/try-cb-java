@@ -1,10 +1,5 @@
 package trycb.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.couchbase.client.core.message.kv.subdoc.multi.Lookup;
 import com.couchbase.client.deps.com.fasterxml.jackson.core.JsonProcessingException;
 import com.couchbase.client.java.Bucket;
@@ -20,6 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import trycb.model.Result;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class Hotel {
@@ -107,7 +107,7 @@ public class Hotel {
             throw new DataRetrievalFailureException("Query error: " + result.errors());
         }
 
-        List<Map<String, Object>> content = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> content = new ArrayList<>();
         for (SearchQueryRow row : result) {
             DocumentFragment<Lookup> fragment = bucket
                     .lookupIn(row.id())
@@ -119,7 +119,7 @@ public class Hotel {
                     .get("description")
                     .execute();
 
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
 
             String country = (String) fragment.content("country");
             String city = (String) fragment.content("city");

@@ -1,9 +1,5 @@
 package trycb.service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.json.JsonArray;
@@ -15,6 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import rx.functions.Func1;
 import trycb.model.Result;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class User {
@@ -29,15 +29,17 @@ public class User {
     /**
      * Try to log the given user in.
      */
-    public Map<String, Object> login(final Bucket bucket, final String username, final String password) {
+    public Result<Map<String, Object>> login(final Bucket bucket, final String username, final String password) {
         JsonDocument doc = bucket.get("user::" + username);
 
         if (doc == null) {
             throw new AuthenticationCredentialsNotFoundException("Bad Username or Password");
         } else if(BCrypt.checkpw(password, doc.content().getString("password"))) {
-            return JsonObject.create()
+            String narration = "User account " + doc.content().toString() + " founded in document " + doc.id() + " in " + bucket.name()
+                    + (doc.expiry() > 0 ? ", with expiry of " + doc.expiry() + "s" : "");
+            return Result.of(JsonObject.create()
                 .put("token", jwtService.buildToken(username))
-                .toMap();
+                .toMap(), narration);
         } else {
             throw new AuthenticationCredentialsNotFoundException("Bad Username or Password");
         }
@@ -65,7 +67,9 @@ public class User {
         try {
             bucket.insert(doc);
             return Result.of(
-                    JsonObject.create().put("token", jwtService.buildToken(username)).toMap(),
+                    JsonObject.create()
+                            .put("token", jwtService.buildToken(username))
+                            .toMap(),
                     narration);
         } catch (Exception e) {
             throw new AuthenticationServiceException("There was an error creating account");
@@ -109,7 +113,7 @@ public class User {
     }
 
     private static void checkFlight(Object f) {
-        if (f == null || !(f instanceof JsonObject)) {
+        if (!(f instanceof JsonObject)) {
             throw new IllegalArgumentException("Each flight must be a non-null object");
         }
         JsonObject flight = (JsonObject) f;
@@ -126,7 +130,7 @@ public class User {
      */
     public List<Object> getFlightsForUser(final Bucket bucket, final String username) {
         return bucket.async()
-                     .get("user::" + username)
+                     .get("user::" + username) // the  get will return an Observable in which the requested Document is emitted
                      .map(new Func1<JsonDocument, List<Object>>() {
                          @Override
                          public List<Object> call(JsonDocument doc) {

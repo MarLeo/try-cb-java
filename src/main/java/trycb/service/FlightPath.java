@@ -12,16 +12,10 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import trycb.model.Result;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static com.couchbase.client.java.query.Select.select;
-import static com.couchbase.client.java.query.dsl.Expression.i;
-import static com.couchbase.client.java.query.dsl.Expression.s;
-import static com.couchbase.client.java.query.dsl.Expression.x;
+import static com.couchbase.client.java.query.dsl.Expression.*;
 
 @Service
 public class FlightPath {
@@ -84,7 +78,7 @@ public class FlightPath {
 
         Random rand = new Random();
 
-        List<Map<String, Object>> content = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> content = new ArrayList<>();
         for (N1qlQueryRow row : result) {
             content.add(row.value()
                     .put("price", rand.nextInt(2000))

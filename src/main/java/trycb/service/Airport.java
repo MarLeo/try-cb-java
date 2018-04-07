@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.couchbase.client.java.query.Select.select;
-import static com.couchbase.client.java.query.dsl.Expression.i;
-import static com.couchbase.client.java.query.dsl.Expression.s;
-import static com.couchbase.client.java.query.dsl.Expression.x;
+import static com.couchbase.client.java.query.dsl.Expression.*;
 
 @Service
 public class Airport {
@@ -57,7 +55,7 @@ public class Airport {
             throw new DataRetrievalFailureException("Query error: " + result.errors());
         }
 
-        List<Map<String, Object>> content = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> content = new ArrayList<>();
         for (N1qlQueryRow row : result) {
             content.add(row.value().toMap());
         }

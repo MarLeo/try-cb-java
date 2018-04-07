@@ -1,39 +1,38 @@
 package trycb.web;
 
 
-import java.util.List;
-import java.util.Map;
-
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import trycb.model.Error;
 import trycb.model.IValue;
 import trycb.model.Result;
 import trycb.service.TokenService;
 import trycb.service.User;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/user")
+@Api(value = "User Controller", description = "manage user login data", tags = "User API")
 public class UserController {
 
     private final Bucket bucket;
     private final User userService;
     private final TokenService jwtService;
 
-     @Value("${storage.expiry:0}")
+    @Value("${storage.expiry:0}")
     private int expiry;
 
     @Autowired
@@ -43,7 +42,8 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    @RequestMapping(value="/login", method= RequestMethod.POST)
+    @RequestMapping(value="/login", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Retrieve user login", response = Result.class)
     public ResponseEntity<? extends IValue> login(@RequestBody Map<String, String> loginInfo) {
         String user = loginInfo.get("user");
         String password = loginInfo.get("password");
@@ -52,8 +52,8 @@ public class UserController {
         }
 
         try {
-            Map<String, Object> data = userService.login(bucket, user, password);
-            return ResponseEntity.ok(Result.of(data));
+            Result<Map<String, Object>> data = userService.login(bucket, user, password);
+            return ResponseEntity.ok(Result.of(data).getData());
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new Error(e.getMessage()));
@@ -63,7 +63,8 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value="/signup", method=RequestMethod.POST)
+    @RequestMapping(value="/signup", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create a new user login", response = Result.class)
     public ResponseEntity<? extends IValue> createLogin(@RequestBody String json) {
         JsonObject jsonData = JsonObject.fromJson(json);
         try {
