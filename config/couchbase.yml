@@ -1,0 +1,9 @@
+  jwt:
+    enabled: true
+    secret: UNSECURE_SECRET_TOKEN
+  storage:
+    bucket: travel-sample
+    expiry: 0
+    host: 192.168.0.13
+    password: password
+    username: Administrator

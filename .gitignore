@@ -4,3 +4,8 @@ target/
 .idea/
 Thumbs.db
 ~*
+/.classpath
+/.project
+.classpath
+.project
+.settings/
